@@ -170,7 +170,7 @@ uint8_t convert(char *src)
     }
     return ret;
 }
-void modbustask(SoftwareSerial *sfserial)
+void modbustask(SoftwareSerial *sfserial, WiFiClient *TCPClient)
 {
     int _len = 0;
     char *_frame = {};
@@ -187,6 +187,10 @@ void modbustask(SoftwareSerial *sfserial)
     _frame = (char *)malloc(_len);
     for (i = 0; i < _len; i++)
         _frame[i] = (*sfserial).read();
+     for(byte cln = 0; cln < 4; cln++) {   
+        if(TCPClient[cln])                     
+          TCPClient[cln].write(_frame, _len); //send the buffer to TCP port:8880 
+      }
     if (_len > 0)
     {
         String callbackstr = *byteToHexStr(_frame, _len);
